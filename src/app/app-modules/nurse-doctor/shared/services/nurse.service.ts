@@ -694,6 +694,17 @@ export class NurseService {
     };
   }
 
+  private normalizeToUTCMidnight(date: Date | null | undefined): string | null {
+    if (!date) return null;
+
+    const d = new Date(date);
+
+    const utcDate = new Date(
+      Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0)
+    );
+    return utcDate.toISOString();
+  }
+
   postANCDetailForm(patientANCForm: any, benVisitID: any) {
     const detailedANC = JSON.parse(
       JSON.stringify(patientANCForm.controls.patientANCDetailsForm.value),
@@ -702,11 +713,15 @@ export class NurseService {
       JSON.stringify(patientANCForm.controls.obstetricFormulaForm.value),
     );
     if (detailedANC.lmpDate) {
-      const lmpDate = new Date(detailedANC.lmpDate);
-      const adjustedDate = new Date(
-        lmpDate.getTime() - lmpDate.getTimezoneOffset() * 60000,
+      detailedANC.lmpDate = this.normalizeToUTCMidnight(
+        new Date(detailedANC.lmpDate)
       );
-      detailedANC.lmpDate = adjustedDate.toISOString();
+    }
+
+    if (detailedANC.expDelDt) {
+      detailedANC.expDelDt = this.normalizeToUTCMidnight(
+        new Date(detailedANC.expDelDt)
+      );
     }
 
     const combinedANCForm = Object.assign({}, detailedANC, {
@@ -726,7 +741,29 @@ export class NurseService {
   }
 
   postANCImmunizationForm(patientANCImmunizationForm: any, benVisitID: any) {
-    const immunizationForm = Object.assign({}, patientANCImmunizationForm, {
+    const immunizationFormValue = JSON.parse(
+      JSON.stringify(patientANCImmunizationForm)
+    );
+
+    if (immunizationFormValue.dateReceivedForTT_1) {
+      immunizationFormValue.dateReceivedForTT_1 = this.normalizeToUTCMidnight(
+        new Date(immunizationFormValue.dateReceivedForTT_1)
+      );
+    }
+
+    if (immunizationFormValue.dateReceivedForTT_2) {
+      immunizationFormValue.dateReceivedForTT_2 = this.normalizeToUTCMidnight(
+        new Date(immunizationFormValue.dateReceivedForTT_2)
+      );
+    }
+
+    if (immunizationFormValue.dateReceivedForTT_3) {
+      immunizationFormValue.dateReceivedForTT_3 = this.normalizeToUTCMidnight(
+        new Date(immunizationFormValue.dateReceivedForTT_3)
+      );
+    }
+
+    const immunizationForm = Object.assign({}, immunizationFormValue, {
       beneficiaryRegID: this.sessionstorage.getItem('beneficiaryRegID'),
       benVisitID: benVisitID,
       providerServiceMapID: this.sessionstorage.getItem('providerServiceID'),
@@ -1264,11 +1301,7 @@ export class NurseService {
     if (!temp.lMPDate) {
       temp.lMPDate = undefined;
     } else {
-      const lmpDate = new Date(temp.lMPDate);
-      const adjustedDate = new Date(
-        lmpDate.getTime() - lmpDate.getTimezoneOffset() * 60000,
-      );
-      temp.lMPDate = adjustedDate.toISOString();
+      temp.lMPDate = this.normalizeToUTCMidnight(new Date(temp.lMPDate));
     }
 
     const menstrualHistoryData = Object.assign({}, temp, otherDetails);
@@ -1892,6 +1925,11 @@ export class NurseService {
       temp.newBornHealthStatusID =
         temp.newBornHealthStatus.newBornHealthStatusID;
       temp.newBornHealthStatus = temp.newBornHealthStatus.newBornHealthStatus;
+    }
+
+    if (temp.dDate) {
+      temp.dateOfDelivery = this.normalizeToUTCMidnight(new Date(temp.dDate));
+      temp.dDate = temp.dateOfDelivery;
     }
 
     const patientPNCDetails = Object.assign({}, temp, {

@@ -134,6 +134,46 @@ export class AncComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
       visitCode: this.sessionstorage.getItem('visitCode'),
     };
 
+    const immunizationForm = patientANCForm.get('patientANCImmunizationForm');
+
+    if (immunizationForm) {
+      const ttDateFields = [
+        'dateReceivedForTT_1',
+        'dateReceivedForTT_2',
+        'dateReceivedForTT_3',
+      ];
+
+      ttDateFields.forEach((field) => {
+        const value = immunizationForm.get(field)?.value;
+
+        if (value) {
+          immunizationForm.patchValue({
+            [field]: this.normalizeToUTCMidnight(new Date(value)),
+          });
+        }
+      });
+    }
+
+    const ancDetailsForm = patientANCForm.get('patientANCDetailsForm');
+
+    if (ancDetailsForm) {
+      const lmpDateValue = ancDetailsForm.get('lmpDate')?.value;
+
+      if (lmpDateValue) {
+        ancDetailsForm.patchValue({
+          lmpDate: this.normalizeToUTCMidnight(new Date(lmpDateValue)),
+        });
+      }
+
+      const expDelDtValue = ancDetailsForm.get('expDelDt')?.value;
+
+      if (expDelDtValue) {
+        ancDetailsForm.patchValue({
+          expDelDt: this.normalizeToUTCMidnight(new Date(expDelDtValue)),
+        });
+      }
+    }
+
     this.updateANCDetailsSubs = this.doctorService
       .updateANCDetails(patientANCForm, temp)
       .subscribe(
@@ -150,6 +190,16 @@ export class AncComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
           this.confirmationService.alert(err, 'error');
         },
       );
+  }
+
+  private normalizeToUTCMidnight(date: Date | null | undefined): string | null {
+    if (!date) return null;
+
+    const d = new Date(date);
+    const utcDate = new Date(
+      Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0)
+    );
+    return utcDate.toISOString();
   }
 
   getHRPDetails() {
