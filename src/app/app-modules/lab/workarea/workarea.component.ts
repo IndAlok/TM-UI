@@ -85,8 +85,7 @@ export class WorkareaComponent
   testName!: string;
   current_language_set: any;
   maxFileSize = 5;
-  ecgAbnormalities: any;
-  enableEcgAbnormal = false;
+  ecgAbnormalOptions: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -108,6 +107,7 @@ export class WorkareaComponent
     this.getTestRequirements();
     this.stepExpand = 0;
     this.testName = environment.RBSTest;
+    this.fetchEcgAbnormalFindings();
   }
   ngDoCheck() {
     this.assignSelectedLanguage();
@@ -116,6 +116,45 @@ export class WorkareaComponent
     const getLanguageJson = new SetLanguageComponent(this.httpServiceService);
     getLanguageJson.setLanguage();
     this.current_language_set = getLanguageJson.currentLanguageObject;
+  }
+
+  fetchEcgAbnormalFindings() {
+    this.masterdataService.getEcgAbnormalFindings().subscribe(
+      (res: any) => {
+        if (res.statusCode === 200 && res.data) {
+          this.ecgAbnormalOptions = res.data
+            .filter((item: any) => !item.deleted)
+            .sort((a: any, b: any) =>
+              a.findingName.localeCompare(b.findingName),
+            );
+        }
+      },
+      (error) => {
+        console.error('Error fetching ECG abnormal findings', error);
+      },
+    );
+  }
+
+  isEcgAbnormal(procedure: any): boolean {
+    const name = procedure?.value?.procedureName;
+    const comps = procedure?.value?.compListDetails;
+    if (!name || !Array.isArray(comps)) {
+      return false;
+    }
+    return (
+      name.includes('ECG') &&
+      comps.some((comp: any) => comp.compOptSelected === 'Abnormal')
+    );
+  }
+
+  isFieldRequired(procedure: any): boolean {
+    return (
+      (procedure.value.isMandatory === true &&
+        procedure.value.procedureName === this.testName &&
+        this.stripSelected === true) ||
+      (procedure.value.procedureName !== this.testName &&
+        procedure.value.isMandatory === true)
+    );
   }
 
   /**
@@ -220,7 +259,8 @@ export class WorkareaComponent
    * Patch Values for Lab Test Procedure
    */
   patchLabTestProcedureMasterData(test: any, index: any) {
-    this.labForm.at(index).patchValue({
+    const ctrl = this.labForm.at(index);
+    ctrl.patchValue({
       procedureType: test.procedureType,
       procedureName: test.procedureName,
       procedureID: test.procedureID,
@@ -232,6 +272,7 @@ export class WorkareaComponent
       calibrationStartAPI: test.calibrationStartAPI,
       calibrationStatusAPI: test.calibrationStatusAPI,
       calibrationEndAPI: test.calibrationEndAPI,
+      ecgAbnormalFindings: test.ecgAbnormalFindings || [],
     });
     this.patchLabTestComponentCommonMasterData(test.compListDetails, index);
   }
