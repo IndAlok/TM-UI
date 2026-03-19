@@ -2122,6 +2122,8 @@ export class WorkareaComponent
         }
       }
     }
+
+  
     if (required.length) {
       this.confirmationService.notify(
         this.current_language_set.alerts.info.belowFields,
@@ -2231,7 +2233,7 @@ export class WorkareaComponent
       !this.schedulerData
     )
       required.push(this.current_language_set.nurseData.scheduleTM);
-
+    
     if (required.length) {
       this.confirmationService.notify(
         this.current_language_set.alerts.info.belowFields,

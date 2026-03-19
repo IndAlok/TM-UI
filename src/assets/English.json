@@ -105,7 +105,7 @@
             "district": "District / Village",
             "registrationDate": "Registration Date",
             "image": "Image",
-            "advanceSearch": "Advance Search",
+            "advanceSearch": "Advanced Search",
             "externalSearch": "Higher Health Facility Search",
             "status": "Status",
             "visitCategory": "Visit Category / Visit No",
@@ -298,7 +298,7 @@
             "toTime": "To Time",
             "Kindlyuploadthefiles": "Kindly upload the files",
             "clearslots":"Clear Slot",
-            "advanceBeneficiarySearch": "Advance Beneficiary Search",
+            "advanceBeneficiarySearch": "Advanced Beneficiary Search",
             "externalBeneficiarySearch": "External Beneficiary Search",
             "firstNameisrequired": "First Name is required",
             "pleaseprovideatleast2character": "Please provide atleast 2 character",
@@ -1345,7 +1345,8 @@
             "image": "View Image",
             "reschedule": "Reschedule TC",
             "cancel": "Cancel",
-            "schedule": "Schedule"
+            "schedule": "Schedule",
+            "accept": "Accept"
         },
         "casesheet": {
             "caseComponent": "Select casesheet component for print",
