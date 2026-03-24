@@ -786,7 +786,7 @@
                       name="form"
                       [(ngModel)]="tempform"
                       (selectionChange)="getFormValueChanged()"
-                      required
+
                     >
                       <mat-option
                         *ngFor="let item of drugFormMaster"
@@ -811,7 +811,6 @@
                       [(ngModel)]="tempDrugName"
                       (keyup)="filterMedicine(tempDrugName)"
                       (blur)="reEnterMedicine()"
-                      required
                       [matAutocomplete]="autoGroup"
                     />
                     <mat-autocomplete
@@ -844,7 +843,6 @@
                       name="dose"
                       [(ngModel)]="currentPrescription.dose"
                       [disabled]="!currentPrescription.drugID"
-                      required
                     >
                       <mat-option
                         *ngFor="let item of filteredDrugDoseMaster"
@@ -865,7 +863,6 @@
                       name="frequency"
                       [(ngModel)]="currentPrescription.frequency"
                       [disabled]="!currentPrescription.drugID"
-                      required
                     >
                       <mat-option
                         *ngFor="let item of drugFrequencyMaster"
@@ -889,7 +886,6 @@
                       name="duration"
                       [(ngModel)]="currentPrescription.duration"
                       [disabled]="!currentPrescription.drugID"
-                      required
                     >
                       <mat-option
                         *ngFor="let item of drugDurationMaster"
@@ -910,7 +906,6 @@
                       name="unit"
                       [(ngModel)]="currentPrescription.unit"
                       [disabled]="!currentPrescription.drugID"
-                      required
                     >
                       <mat-option
                         *ngFor="let item of drugDurationUnitMaster"
@@ -938,7 +933,6 @@
                       name="quantity"
                       [(ngModel)]="currentPrescription.qtyPrescribed"
                       [disabled]="!currentPrescription.drugID"
-                      required
                     >
                       <mat-option
                         *ngFor="let item of drugDurationMaster | slice: 0 : 5"
