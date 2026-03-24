@@ -102,6 +102,7 @@ export class RegistrationComponent
 
   country = { id: 1, Name: 'India' };
   disableGenerateOTP = false;
+  isSubmitting = false;
 
   constructor(
     private confirmationService: ConfirmationService,
@@ -827,6 +828,7 @@ export class RegistrationComponent
    * Submit Registration Form
    */
   submitBeneficiaryDetails() {
+    this.isSubmitting = true;
     const newDate = this.dateFormatChange();
     const valueToSend = this.beneficiaryRegistrationForm.value;
     valueToSend.personalDetailsForm.dob = newDate;
@@ -884,12 +886,16 @@ export class RegistrationComponent
         }
         this.resetBeneficiaryForm();
         this.disableGenerateOTP = false;
+        this.isSubmitting = false;
       } else {
         this.confirmationService.alert(
           this.currentLanguageSet.alerts.info.issueInSavngData,
           'error',
         );
+        this.isSubmitting = false;
       }
+    }, () => {
+      this.isSubmitting = false;
     });
   }
 
