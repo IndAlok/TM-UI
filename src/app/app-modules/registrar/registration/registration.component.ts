@@ -755,11 +755,13 @@ export class RegistrationComponent
    * Post Form Button Called, Decide whether to Submit or Update
    */
   postButtonCall() {
+    if (this.isSubmitting) return;
     const valid = this.checkValids(this.beneficiaryRegistrationForm);
 
     // Need to revert back the health id change - 2024
     // if (valid && this.checkValidHealthID(null)) {
     if (valid) {
+      this.isSubmitting = true;
       if (this.patientRevisit) {
         this.updateBeneficiarynPassToNurse();
       } else if (!this.patientRevisit) {
@@ -828,7 +830,6 @@ export class RegistrationComponent
    * Submit Registration Form
    */
   submitBeneficiaryDetails() {
-    this.isSubmitting = true;
     const newDate = this.dateFormatChange();
     const valueToSend = this.beneficiaryRegistrationForm.value;
     valueToSend.personalDetailsForm.dob = newDate;
@@ -916,42 +917,49 @@ export class RegistrationComponent
       this.beneficiaryRegistrationForm.value.personalDetailsForm,
     );
 
-    this.registrarService.updateBeneficiary(iEMRForm).subscribe((res: any) => {
-      if (res && res.statusCode === 200) {
-        this.confirmationService.alert(res.data.response, 'success');
-        const reqObj = {
-          beneficiaryRegID: null,
-          beneficiaryID: personalForm.beneficiaryID,
-          healthId: otherDetailsForm.controls['healthId'].value,
-          healthIdNumber: otherDetailsForm.controls['healthIdNumber'].value,
-          authenticationMode: otherDetailsForm.controls['healthIdMode'].value,
-          providerServiceMapId:
-            this.sessionstorage.getItem('providerServiceID'),
-          createdBy: this.sessionstorage.getItem('userName'),
-        };
+    this.registrarService.updateBeneficiary(iEMRForm).subscribe(
+      (res: any) => {
+        if (res && res.statusCode === 200) {
+          this.confirmationService.alert(res.data.response, 'success');
+          const reqObj = {
+            beneficiaryRegID: null,
+            beneficiaryID: personalForm.beneficiaryID,
+            healthId: otherDetailsForm.controls['healthId'].value,
+            healthIdNumber: otherDetailsForm.controls['healthIdNumber'].value,
+            authenticationMode: otherDetailsForm.controls['healthIdMode'].value,
+            providerServiceMapId:
+              this.sessionstorage.getItem('providerServiceID'),
+            createdBy: this.sessionstorage.getItem('userName'),
+          };
 
-        if (
-          (otherDetailsForm.controls['healthId'].value !== undefined &&
-            otherDetailsForm.controls['healthId'].value !== null) ||
-          (otherDetailsForm.controls['healthIdNumber'].value !== undefined &&
-            otherDetailsForm.controls['healthIdNumber'].value !== null)
-        ) {
-          this.registrarService.mapHealthId(reqObj).subscribe((res: any) => {
-            if (res.statusCode === 200) {
-              console.log('res', res);
-            } else {
-              this.confirmationService.alert(
-                this.currentLanguageSet.alerts.info.issueInSavngData,
-                'error',
-              );
-            }
-          });
+          if (
+            (otherDetailsForm.controls['healthId'].value !== undefined &&
+              otherDetailsForm.controls['healthId'].value !== null) ||
+            (otherDetailsForm.controls['healthIdNumber'].value !== undefined &&
+              otherDetailsForm.controls['healthIdNumber'].value !== null)
+          ) {
+            this.registrarService.mapHealthId(reqObj).subscribe((res: any) => {
+              if (res.statusCode === 200) {
+                console.log('res', res);
+              } else {
+                this.confirmationService.alert(
+                  this.currentLanguageSet.alerts.info.issueInSavngData,
+                  'error',
+                );
+              }
+            });
+          }
+          this.isSubmitting = false;
+          this.router.navigate(['/registrar/search/']);
+        } else {
+          this.isSubmitting = false;
+          this.confirmationService.alert(res.errorMessage, 'error');
         }
-        this.router.navigate(['/registrar/search/']);
-      } else {
-        this.confirmationService.alert(res.errorMessage, 'error');
-      }
-    });
+      },
+      () => {
+        this.isSubmitting = false;
+      },
+    );
   }
 
   /**
