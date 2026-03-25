@@ -756,17 +756,19 @@ export class RegistrationComponent
    */
   postButtonCall() {
     if (this.isSubmitting) return;
+    this.isSubmitting = true;
     const valid = this.checkValids(this.beneficiaryRegistrationForm);
 
     // Need to revert back the health id change - 2024
     // if (valid && this.checkValidHealthID(null)) {
     if (valid) {
-      this.isSubmitting = true;
       if (this.patientRevisit) {
         this.updateBeneficiarynPassToNurse();
       } else if (!this.patientRevisit) {
         this.submitBeneficiaryDetails();
       }
+    } else {
+      this.isSubmitting = false;
     }
   }
   checkValidHealthID(type: any) {
