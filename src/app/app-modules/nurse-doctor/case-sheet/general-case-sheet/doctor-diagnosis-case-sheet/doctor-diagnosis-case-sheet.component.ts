@@ -102,6 +102,7 @@ export class DoctorDiagnosisCaseSheetComponent
   referralReasonList = '';
   isCovidVaccinationStatusVisible = false;
   userName: any;
+  ecgFindingsMap: { [key: number]: string } = {};
 
   constructor(
     private doctorService: DoctorService,
@@ -119,6 +120,7 @@ export class DoctorDiagnosisCaseSheetComponent
     this.getHealthIDDetails();
     this.assignSelectedLanguage();
     this.getAssessmentID();
+    this.fetchEcgAbnormalFindings();
   }
 
   ngDoCheck() {
@@ -272,6 +274,11 @@ export class DoctorDiagnosisCaseSheetComponent
         this.caseRecords.LabReport = [vitalsRBSValue].concat(
           this.caseRecords.LabReport,
         );
+      }
+
+      // Map ECG findings IDs to labels
+      if (this.caseRecords && this.caseRecords.LabReport) {
+        this.mapEcgFindingsToLabels(this.caseRecords.LabReport);
       }
 
       if (
@@ -549,6 +556,42 @@ export class DoctorDiagnosisCaseSheetComponent
           console.log('error', err.errorMessage);
         },
       );
+  }
+
+  fetchEcgAbnormalFindings() {
+    this.masterdataService.getEcgAbnormalFindings().subscribe(
+      (response: any) => {
+        if (response && response.data) {
+          response.data.forEach((finding: any) => {
+            this.ecgFindingsMap[finding.findingID] = finding.findingName;
+          });
+          if (this.caseRecords && this.caseRecords.LabReport) {
+            this.mapEcgFindingsToLabels(this.caseRecords.LabReport);
+          }
+        }
+      },
+      (error: any) => {
+        console.error('Error fetching ECG abnormal findings:', error);
+      },
+    );
+  }
+
+  mapEcgFindingsToLabels(labResults: any[]) {
+    if (!labResults || labResults.length === 0) {
+      return;
+    }
+    labResults.forEach((procedure: any) => {
+      if (procedure.procedureName && procedure.procedureName.includes('ECG')) {
+        if (
+          procedure.abnormalFindings &&
+          procedure.abnormalFindings.length > 0
+        ) {
+          procedure.abnormalFindingLabels = procedure.abnormalFindings.map(
+            (id: number) => this.ecgFindingsMap[id] || `Unknown (${id})`,
+          );
+        }
+      }
+    });
   }
 
   getAssessmentID() {

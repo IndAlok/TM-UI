@@ -109,6 +109,26 @@
                 {{ component?.remarks }}
               </td>
             </tr>
+            <tr
+              *ngIf="
+                test?.procedureName &&
+                test?.procedureName.includes('ECG') &&
+                test?.abnormalFindingLabels &&
+                test?.abnormalFindingLabels.length > 0
+              "
+            >
+              <td
+                colspan="4"
+                style="
+                  background-color: #f9f3cd;
+                  font-weight: 500;
+                  padding: 8px;
+                "
+              >
+                <strong>ECG Abnormal Findings:</strong>
+                {{ test?.abnormalFindingLabels?.join(", ") }}
+              </td>
+            </tr>
           </ng-container>
         </tbody>
         <tfoot>
@@ -483,6 +503,26 @@
                   "
                 >
                   {{ component?.remarks }}
+                </td>
+              </tr>
+              <tr
+                *ngIf="
+                  test?.procedureName &&
+                  test?.procedureName.includes('ECG') &&
+                  test?.abnormalFindingLabels &&
+                  test?.abnormalFindingLabels.length > 0
+                "
+              >
+                <td
+                  colspan="6"
+                  style="
+                    background-color: #f9f3cd;
+                    font-weight: 500;
+                    padding: 8px;
+                  "
+                >
+                  <strong>ECG Abnormal Findings:</strong>
+                  {{ test?.abnormalFindingLabels?.join(", ") }}
                 </td>
               </tr>
             </ng-container>

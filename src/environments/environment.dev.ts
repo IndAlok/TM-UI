@@ -157,6 +157,7 @@ export const environment = {
 
   getprescribedTestDataUrl: `${TM_API}labTechnician/get/prescribedProceduresList`,
   labSaveWork: `${TM_API}labTechnician/save/LabTestResult`,
+  getEcgAbnormalFindingsUrl: `${TM_API}master/ecgAbnormalFindings`,
 
   /**
    * Worklist Urls
