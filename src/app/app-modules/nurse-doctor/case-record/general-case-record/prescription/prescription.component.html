@@ -45,6 +45,7 @@
           name="form"
           [(ngModel)]="currentPrescription.formName"
           (selectionChange)="getFormValueChanged()"
+          #form="ngModel"
         >
           <mat-option
             *ngFor="let item of drugFormMaster"
@@ -67,6 +68,7 @@
           [disabled]="!currentPrescription.formID"
           matInput
           [(ngModel)]="tempDrugName"
+          [required]="!!currentPrescription.formName"
           (keyup)="filterMedicine(tempDrugName)"
           (blur)="reEnterMedicine()"
           [matAutocomplete]="autoGroup"
@@ -92,6 +94,7 @@
           name="dose"
           [(ngModel)]="currentPrescription.dose"
           [disabled]="!currentPrescription.drugID"
+          [required]="!!currentPrescription.drugID"
         >
           <mat-option
             *ngFor="let item of filteredDrugDoseMaster"
@@ -113,6 +116,7 @@
           name="frequency"
           [(ngModel)]="currentPrescription.frequency"
           [disabled]="!currentPrescription.drugID"
+          [required]="!!currentPrescription.drugID"
         >
           <mat-option
             *ngFor="let item of drugFrequencyMaster"
@@ -136,6 +140,7 @@
           name="duration"
           [(ngModel)]="currentPrescription.duration"
           [disabled]="!currentPrescription.drugID"
+          [required]="!!currentPrescription.drugID"
         >
           <mat-option *ngFor="let item of drugDurationMaster" [value]="item">
             {{ item }}
@@ -152,6 +157,7 @@
           name="unit"
           [(ngModel)]="currentPrescription.unit"
           [disabled]="!currentPrescription.drugID"
+          [required]="!!currentPrescription.drugID"
         >
           <mat-option
             *ngFor="let item of drugDurationUnitMaster"
@@ -180,6 +186,7 @@
           name="quantity"
           [(ngModel)]="currentPrescription.qtyPrescribed"
           [disabled]="!currentPrescription.drugID"
+          [required]="!!currentPrescription.drugID"
         >
           <mat-option
             *ngFor="let item of drugDurationMaster | slice: 0 : 5"
@@ -246,7 +253,7 @@
     <div class="col-md-2 box centered-button">
       <button
         id="add-button"
-        [disabled]="prescriptionForm.invalid"
+        [disabled]="!canAddPrescription()"
         mat-raised-button
         class="mat_green"
         color="primary"

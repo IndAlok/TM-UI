@@ -195,6 +195,7 @@ export class PrescriptionComponent implements OnInit, OnDestroy, DoCheck {
   getFormValueChanged() {
     this.clearCurrentDetails();
     this.getFormDetails();
+    this.drugPrescriptionForm.patchValue({ incompletePrescription: true });
   }
   getFormDetails() {
     this.drugFormMaster.filter((item: any) => {
@@ -362,6 +363,21 @@ export class PrescriptionComponent implements OnInit, OnDestroy, DoCheck {
 
     this.prescriptionForm.form.markAsUntouched();
     this.isStockAvalable = '';
+    this.drugPrescriptionForm.patchValue({ incompletePrescription: false });
+  }
+
+  canAddPrescription(): boolean {
+    if (!this.currentPrescription.formName) return false;
+    if (!this.currentPrescription.drugID) return false;
+    if (!this.currentPrescription.dose) return false;
+    if (!this.currentPrescription.frequency) return false;
+    if (!this.currentPrescription.duration) return false;
+    if (!this.currentPrescription.unit) return false;
+    if (this.currentPrescription.formID &&
+        this.currentPrescription.formID !== 1 &&
+        this.currentPrescription.formID !== 2 &&
+        !this.currentPrescription.qtyPrescribed) return false;
+    return true;
   }
 
   submitForUpload() {
