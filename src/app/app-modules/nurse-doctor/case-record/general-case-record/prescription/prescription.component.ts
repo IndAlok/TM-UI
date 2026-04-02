@@ -194,8 +194,13 @@ export class PrescriptionComponent implements OnInit, OnDestroy, DoCheck {
 
   getFormValueChanged() {
     this.clearCurrentDetails();
-    this.getFormDetails();
-    this.drugPrescriptionForm.patchValue({ incompletePrescription: true });
+    if (this.currentPrescription.formName) {
+      this.getFormDetails();
+      this.drugPrescriptionForm.patchValue({ incompletePrescription: true });
+    } else {
+      this.currentPrescription.formID = null;
+      this.drugPrescriptionForm.patchValue({ incompletePrescription: false });
+    }
   }
   getFormDetails() {
     this.drugFormMaster.filter((item: any) => {
