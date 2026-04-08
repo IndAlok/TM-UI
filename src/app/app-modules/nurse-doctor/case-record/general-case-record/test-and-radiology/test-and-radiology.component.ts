@@ -505,9 +505,11 @@ export class TestAndRadiologyComponent implements OnInit, OnDestroy, DoCheck {
         };
         this.labService.viewFileContent(fileID).subscribe(
           (res: any) => {
-            if (res.data.statusCode === 200) {
-              const fileContent = res.data.data.response;
-              location.href = fileContent;
+            if (res.statusCode === 200) {
+              const fileContent = res.data.response;
+              if (fileContent) {
+                window.open(fileContent, '_blank');
+              }
             }
           },
           (err) => {
