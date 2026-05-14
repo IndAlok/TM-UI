@@ -35,6 +35,8 @@ import { map, Observable } from 'rxjs';
   selector: 'app-doctor-diagnosis-case-sheet',
   templateUrl: './doctor-diagnosis-case-sheet.component.html',
   styleUrls: ['./doctor-diagnosis-case-sheet.component.css'],
+
+  standalone: false,
 })
 export class DoctorDiagnosisCaseSheetComponent
   implements OnInit, OnChanges, DoCheck
@@ -124,7 +126,7 @@ export class DoctorDiagnosisCaseSheetComponent
   ngDoCheck() {
     this.assignSelectedLanguage();
   }
-  
+
   assignSelectedLanguage() {
     const getLanguageJson = new SetLanguageComponent(this.httpServiceService);
     getLanguageJson.setLanguage();
@@ -132,7 +134,6 @@ export class DoctorDiagnosisCaseSheetComponent
   }
 
   ngOnChanges() {
-
     this.ncdScreeningCondition = null;
     if (this.casesheetData) {
       this.userName = this.casesheetData?.doctorData?.diagnosis?.createdBy;
@@ -359,7 +360,11 @@ export class DoctorDiagnosisCaseSheetComponent
         this.casesheetData &&
         this.casesheetData.doctorData.Refer &&
         this.casesheetData.doctorData.Refer.revisitDate &&
-        !moment(this.casesheetData.doctorData.Refer.revisitDate, 'DD/MM/YYYY', true).isValid()
+        !moment(
+          this.casesheetData.doctorData.Refer.revisitDate,
+          'DD/MM/YYYY',
+          true,
+        ).isValid()
       ) {
         const sDate = new Date(this.casesheetData.doctorData.Refer.revisitDate);
         this.casesheetData.doctorData.Refer.revisitDate = [
@@ -370,7 +375,6 @@ export class DoctorDiagnosisCaseSheetComponent
       }
 
       if (this.casesheetData?.BeneficiaryData?.doctorSignatureFlag) {
-        
         this.downloadSign();
       }
       this.getVaccinationTypeAndDoseMaster();
@@ -381,13 +385,12 @@ export class DoctorDiagnosisCaseSheetComponent
     const len = String(10).length - String(this).length + 1;
     return len > 0 ? new Array(len).join('0') + this : this;
   }
- 
-   downloadSign() {
 
+  downloadSign() {
     this.getUserId().subscribe((userId) => {
       const userIdToUse = this.beneficiaryDetails?.tCSpecialistUserID ?? userId;
-      console.log("User", userIdToUse);
-      
+      console.log('User', userIdToUse);
+
       this.doctorService.downloadSign(userIdToUse).subscribe(
         (response: any) => {
           const blob = new Blob([response], { type: response.type });
@@ -398,7 +401,6 @@ export class DoctorDiagnosisCaseSheetComponent
         },
       );
     });
-
   }
 
   getUserId(): Observable<any> {
